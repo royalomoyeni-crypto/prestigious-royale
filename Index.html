@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | Omniverse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Space Grotesk', 'system-ui', 'sans-serif'] },
+          colors: { omni: { 900: '#050505', 800: '#0F0F12', 700: '#18181C', red: '#EF4444', purple: '#8B5CF6', green: '#10B981' } }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-omni-900 text-white font-sans">
+
+  <header class="bg-omni-800 border-b border-white/5">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="text-xl font-bold text-omni-red">⚡ Admin Panel</span>
+        <span class="px-3 py-1 bg-omni-red/20 text-omni-red text-xs font-bold rounded-full">OMNIVERSE</span>
+      </div>
+      <button onclick="logout()" class="text-sm text-gray-400 hover:text-white">Logout</button>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid lg:grid-cols-4 gap-6">
+
+      <!-- Sidebar -->
+      <aside class="lg:col-span-1">
+        <div class="bg-omni-800 border border-white/5 rounded-xl p-4 space-y-2">
+          <button onclick="showTab('orders')" class="tab-btn w-full text-left px-4 py-3 rounded-lg bg-omni-purple/20 text-omni-purple font-semibold">📦 Orders</button>
+          <button onclick="showTab('products')" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 transition">➕ Add Products</button>
+          <button onclick="showTab('media')" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 transition">🎥 Upload Media</button>
+          <button onclick="showTab('users')" class="tab-btn w-full text-left px-4 py-3 rounded-lg hover:bg-white/5 transition">👥 Users</button>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <div class="lg:col-span-3">
+
+        <!-- Orders Tab -->
+        <div id="tab-orders" class="tab-content bg-omni-800 border border-white/5 rounded-xl p-6">
+          <h2 class="text-2xl font-bold mb-6">Manage Orders</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="border-b border-white/10">
+                <tr class="text-left text-gray-400">
+                  <th class="pb-3">Order ID</th>
+                  <th class="pb-3">User</th>
+                  <th class="pb-3">Universe</th>
+                  <th class="pb-3">Amount</th>
+                  <th class="pb-3">Status</th>
+                  <th class="pb-3">Action</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTable">
+                <!-- JS populates -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Add Products Tab -->
+        <div id="tab-products" class="tab-content hidden bg-omni-800 border border-white/5 rounded-xl p-6">
+          <h2 class="text-2xl font-bold mb-6">Add New Product</h2>
+          <form id="addProductForm" class="space-y-4">
+            <select id="productUniverse" class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+              <option value="tech">Tech Universe</option>
+              <option value="food">Food Universe</option>
+              <option value="travel">Travel Universe</option>
+              <option value="stays">Stays Universe</option>
+            </select>
+            <input type="text" id="productName" placeholder="Product Name" required class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+            <input type="number" id="productPrice" placeholder="Price (₦)" required class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+            <input type="number" id="productOP" placeholder="OmniPoints Earned" required class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+            <textarea id="productDesc" placeholder="Description" class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg h-24"></textarea>
+            <button type="submit" class="w-full py-3 bg-omni-purple hover:bg-omni-purple/90 font-bold rounded-lg transition">Add Product</button>
+          </form>
+        </div>
+
+        <!-- Media Upload Tab -->
+        <div id="tab-media" class="tab-content hidden bg-omni-800 border border-white/5 rounded-xl p-6">
+          <h2 class="text-2xl font-bold mb-6">Upload Videos/Images</h2>
+          <form id="mediaUploadForm" class="space-y-4">
+            <select id="mediaUniverse" class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+              <option value="anime">Anime Universe - Episodes</option>
+              <option value="food">Food Universe - Dish Videos</option>
+              <option value="travel">Travel Universe - Car Videos</option>
+            </select>
+            <input type="text" id="mediaTitle" placeholder="Title/Episode Name" required class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+            <div>
+              <label class="text-sm text-gray-400 block mb-2">Upload Video File</label>
+              <input type="file" id="videoFile" accept="video/*" class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+            </div>
+            <div>
+              <label class="text-sm text-gray-400 block mb-2">Upload Thumbnail</label>
+              <input type="file" id="imageFile" accept="image/*" class="w-full bg-omni-700 border border-white/10 px-4 py-3 rounded-lg">
+            </div>
+            <button type="submit" class="w-full py-3 bg-omni-green hover:bg-omni-green/90 text-omni-900 font-bold rounded-lg transition">Upload Media</button>
+          </form>
+          <div id="uploadProgress" class="mt-4 hidden">
+            <div class="w-full bg-omni-700 rounded-full h-2">
+              <div id="progressBar" class="bg-omni-green h-2 rounded-full transition-all" style="width: 0%"></div>
+            </div>
+            <p class="text-sm text-gray-400 mt-2">Uploading... <span id="progressText">0%</span></p>
+          </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" class="tab-content hidden bg-omni-800 border border-white/5 rounded-xl p-6">
+          <h2 class="text-2xl font-bold mb-6">Users</h2>
+          <p class="text-gray-400">User management coming soon. Connect to MySQL users table.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+<script>
+// Tab switching
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('bg-omni-purple/20', 'text-omni-purple'));
+  document.getElementById(`tab-${tab}`).classList.remove('hidden');
+  event.target.classList.add('bg-omni-purple/20', 'text-omni-purple');
+}
+
+// Load orders from all universes
+function loadOrders() {
+  const orders = [];
+  ['tech', 'food', 'travel', 'stays'].forEach(universe => {
+    const items = JSON.parse(localStorage.getItem(`omniOrders_${universe}`)) || [];
+    items.forEach(item => orders.push({...item, universe, user: 'Emeka'}));
+  });
+
+  const tbody = document.getElementById('ordersTable');
+  tbody.innerHTML = orders.map(o => `
+    <tr class="border-b border-white/5">
+      <td class="py-3">#${o.id}</td>
+      <td class="py-3">${o.user}</td>
+      <td class="py-3 capitalize">${o.universe}</td>
+      <td class="py-3">₦${o.price?.toLocaleString()}</td>
+      <td class="py-3">
+        <select onchange="updateStatus('${o.universe}', ${o.id}, this.value)" class="bg-omni-700 border border-white/10 px-2 py-1 rounded text-xs">
+          <option ${o.status==='Pending'?'selected':''}>Pending</option>
+          <option ${o.status==='Processing'?'selected':''}>Processing</option>
+          <option ${o.status==='On the way'?'selected':''}>On the way</option>
+          <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+        </select>
+      </td>
+      <td class="py-3">
+        <button onclick="confirmOrder('${o.universe}', ${o.id})" class="text-xs px-3 py-1 bg-omni-green/20 text-omni-green rounded hover:bg-omni-green/30">Confirm</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" class="py-8 text-center text-gray-500">No orders yet</td></tr>';
+}
+
+function updateStatus(universe, id, status) {
+  const key = `omniOrders_${universe}`;
+  let orders = JSON.parse(localStorage.getItem(key)) || [];
+  orders = orders.map(o => o.id === id? {...o, status} : o);
+  localStorage.setItem(key, JSON.stringify(orders));
+  loadOrders();
+}
+
+function confirmOrder(universe, id) {
+  updateStatus(universe, id, 'Processing');
+  alert(`Order #${id} confirmed. User dashboard will update to "Processing"`);
+}
+
+// Add product - would POST to PHP/MySQL
+document.getElementById('addProductForm').onsubmit = (e) => {
+  e.preventDefault();
+  const data = {
+    universe: document.getElementById('productUniverse').value,
+    name: document.getElementById('productName').value,
+    price: document.getElementById('productPrice').value,
+    op: document.getElementById('productOP').value,
+    desc: document.getElementById('productDesc').value
+  };
+  alert(`Product added: ${data.name} to ${data.universe}. In production this saves to MySQL.`);
+  e.target.reset();
+};
+
+// Media upload - simulates file upload
+document.getElementById('mediaUploadForm').onsubmit = (e) => {
+  e.preventDefault();
+  const videoFile = document.getElementById('videoFile').files[0];
+  if (!videoFile) return alert('Select a video file');
+
+  document.getElementById('uploadProgress').classList.remove('hidden');
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 10;
+    document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('progressText').textContent = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      alert('Video uploaded! In production this moves to /uploads/videos/ and saves path to MySQL.');
+      e.target.reset();
+      document.getElementById('uploadProgress').classList.add('hidden');
+    }
+  }, 200);
+};
+
+function logout() {
+  if (confirm('Logout?')) location.href = 'login.html';
+}
+
+loadOrders();
+</script>
+</body>
+</html>
